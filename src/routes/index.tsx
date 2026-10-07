@@ -4,6 +4,7 @@ import {
   patients, staff, alerts, ems, beds, arrivals, shiftEnding,
   ESI_LABEL, ESI_TARGET, type ESI, type Alert,
 } from "@/lib/ed-data";
+import { HandoffPanel } from "@/components/HandoffPanel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -240,6 +241,14 @@ function Dashboard() {
           </Panel>
         </div>
       </div>
+      <HandoffPanel snapshot={() => ({
+        patients: live.map((p) => `${p.id} ${p.age}y ESI${p.esi} "${p.complaint}" ${p.status}${p.location ? ` @${p.location}` : ""}${p.provider ? ` (${p.provider})` : ""}, ${p.arrivedMinAgo}m since arrival (target ${ESI_TARGET[p.esi]}m)${p.pending?.length ? `, pending: ${p.pending.join(", ")}` : ""}`).join("\n")
+          + `\nBeds: ${beds.occupied}/${beds.total} occupied, ${beds.cleaning} cleaning, ${beds.boarding} boarding.`,
+        staffing: staff.map((s) => `${s.role}: ${s.clockedIn}/${s.scheduled} clocked in, ratio 1:${(census / Math.max(s.clockedIn, 1)).toFixed(1)} vs target 1:${s.targetRatio}${s.note ? ` — ${s.note}` : ""}`).join("\n")
+          + `\nShift ending: ${shiftEnding.map((s) => `${s.name} in ${s.inMin}m`).join(", ")}`,
+        alerts: alerts.map((a) => `[${a.impact}] ${a.title} — ${a.detail} (${a.distance})`).join("\n")
+          + "\n" + ems.map((e) => `EMS ${e.unit} ETA ${Math.max(e.eta - tick, 0)}m ESI${e.esi}: ${e.summary}`).join("\n"),
+      })} />
       <p className="text-center text-[11px] text-muted-foreground font-mono">Demo data · not connected to EHR, timekeeping or news feeds</p>
     </div>
   );
