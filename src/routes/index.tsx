@@ -71,7 +71,7 @@ function Dashboard() {
         <Kpi label="Waiting Room" value={waiting.length} sub={`${overdue.length} past target`} tone={overdue.length > 3 ? "bad" : "warn"} />
         <Kpi label="Avg Wait" value={`${avgWait}m`} sub="door → provider" tone={avgWait > 60 ? "bad" : "warn"} />
         <Kpi label="Beds Occupied" value={`${beds.occupied}/${beds.total}`} sub={`${beds.cleaning} cleaning · ${beds.boarding} boarding`} tone={beds.occupied / beds.total > 0.85 ? "bad" : "ok"} />
-        <Kpi label="EMS Inbound" value={ems.length} sub={`next in ${ems[0].eta}m`} tone="bad" />
+        <Kpi label="EMS Inbound" value={ems.length} sub={`next in ${ems[0]?.eta ?? "-"}m`} tone="bad" />
         <Kpi label="Left w/o Seen" value="2" sub="last 12h · 3.1%" tone="ok" />
       </section>
 
